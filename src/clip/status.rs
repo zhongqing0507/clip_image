@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use std::process;
 
 use clap::Parser;
-use image::{DynamicImage, ImageBuffer, Rgb};
+use image::{DynamicImage, ImageBuffer, Pixel, Rgb};
 use image::{GenericImage,GenericImageView};
 use once_cell::sync::Lazy;
 
@@ -109,15 +109,12 @@ impl ImageInfo {
         bar.set_message("clipping image");
         for x in (0..self.width as u32 - tile_width + 1).step_by(tile_width as usize){
             for y in (0..self.height as u32 - tile_height + 1).step_by(tile_height as usize){
-    
+                // self.image.
                 // 使用sub_image 获取裁剪区域
                 let window = self.image.sub_image(x, y, tile_width, tile_height);
-                
-                let mut cropped_image = ImageBuffer::new(tile_width, tile_height);
-            
-
+                let mut cropped_image = ImageBuffer::<Rgb<u8>, Vec<_>>::new(tile_width, tile_height);
                 for (dx, dy, pixel) in window.pixels(){
-                    cropped_image.put_pixel(dx, dy,pixel);
+                    cropped_image.put_pixel(dx, dy, pixel.to_rgb());
                 }
                 
                 let output_filename = format!("{}_{:02}_{:02}.png", clip_info.file_stem, x/tile_width, y/tile_height);
