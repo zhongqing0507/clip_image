@@ -107,8 +107,8 @@ impl ImageInfo {
         let length = (self.width as u64 / tile_width as u64) * (self.height as u64 / tile_height as u64);
         let bar = create_bar(length);
         bar.set_message("clipping image");
-        for x in (0..self.width as u32 - tile_width + 1).step_by(tile_width as usize){
-            for y in (0..self.height as u32 - tile_height + 1).step_by(tile_height as usize){
+        for y in (0..self.height as u32 - tile_height + 1).step_by(tile_height as usize){
+            for x in (0..self.width as u32 - tile_width + 1).step_by(tile_width as usize){
                 // self.image.
                 // 使用sub_image 获取裁剪区域
                 let window = self.image.sub_image(x, y, tile_width, tile_height);
@@ -117,7 +117,7 @@ impl ImageInfo {
                     cropped_image.put_pixel(dx, dy, pixel.to_rgb());
                 }
                 
-                let output_filename = format!("{}_{:02}_{:02}.png", clip_info.file_stem, x/tile_width, y/tile_height);
+                let output_filename = format!("{}_{:02}_{:02}.png", clip_info.file_stem, y/tile_height, x/tile_width);
     
                 let output_path = output_path.join(output_filename);
                 cropped_image.save(output_path.as_path()).map_err(|err| {
